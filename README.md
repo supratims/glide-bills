@@ -4,4 +4,14 @@ A simple PHP interface to return quotes from the [Glide](https://www.glide.uk.co
 
 ### Authors
 
-Written by [M1ke](http://twitter.com/m1ke) and [StuRents.com](http://sturents.com).
+Written by [Mike Lehan](http://twitter.com/m1ke) and [StuRents.com](http://sturents.com).
+
+It is based on the [Glide Ruby implementation](https://github.com/vpacher/glide) by Volker Pacher.
+
+### Documentation
+
+A PDF API specification used to build this library, provided by Glide, can be found in `docs/`. I have been unable to find a copy of this made available elsewhere on the web.
+
+### Testing
+
+Run `phpunit test.php` for a basic test, to be expanded once we actually get more than a 404 from the interface.
