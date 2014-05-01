@@ -34,7 +34,7 @@ class Glide {
 					$saved=true;
 				}
 			}
-			throw new Exception('There was an error with the Glide API.'.($saved ? ' Log files have been saved at "'.$this->log_dir.'/"' : ''));
+			throw new Exception('There was an error with the Glide API.'.($saved ? ' Log files have been saved at "'.$this->log_dir.'/"' : '').' More details: '.PHP_EOL.implode(PHP_EOL,$errors));
 		}
 		return $this->calculate_totals($quotes);
 	}
@@ -44,8 +44,13 @@ class Glide {
 		$res=$this->_json_post($this->url,$query);
 		$res_arr=json_decode($res);
 		if ($res_arr===false or $res_arr===null){
-			$this->html_error[]=$res;
-			throw new Exception('The JSON data could not be parsed.');
+			if (empty($res)){
+				throw new Exception('No data was returned.');
+			}
+			else {
+				$this->html_error[]=$res;
+				throw new Exception('The JSON data could not be parsed.');
+			}
 		}
 		return is_array($res_arr) ? $res_arr : $res;
 	}
