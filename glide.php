@@ -4,6 +4,10 @@ class Glide {
 	protected $methods=array('frontEnd'=>array(
 	),'portal'=>array(
 	),'signUp'=>array(
+		'payment'=>array(
+			'registerCard',
+			'getClientAddresses',
+		),
 		'quote'=>array(
 			'allServices'=>true,
 			'servicePrice'=>true,
