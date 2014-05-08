@@ -1,7 +1,7 @@
 <?php
 
 class Glide {
-	protected $glide_human_name=array("elec"=>"Electricity","tv_license"=>"TV License");
+	protected $glide_human_name=array("electricity"=>"Electricity","tv_license"=>"TV License");
 	private $api_key;
 	protected $url='https://www.glide.uk.com/api/4.0/signUp/quote/allServices.json';
 	protected $html_error=array();
