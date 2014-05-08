@@ -12,8 +12,8 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		$this->glide=new Glide($api_key);
 	}
 
-	function testGlideResponse(){
-		var_dump($this->glide->get_quote());
+	function testGlideBasicResponse(){
+		print_r($this->glide->get_quote());
 		$this->assertTrue(true);
 	}
 }

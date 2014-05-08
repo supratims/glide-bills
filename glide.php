@@ -3,7 +3,7 @@
 class Glide {
 	protected $glide_human_name=array("elec"=>"Electricity","tv_license"=>"TV License");
 	private $api_key;
-	protected $url='https://www.glide.uk.com/api/4.0/signUp/quote';
+	protected $url='https://www.glide.uk.com/api/4.0/signUp/quote/allServices.json';
 	protected $html_error=array();
 	public $log_html=true;
 	public $log_dir='logs';
@@ -16,16 +16,16 @@ class Glide {
 		return $this;
 	}
 
-	function get_quote(Array $services=array('elec'),Array $extra=array(),$period=6,$tenants=1){
+	function get_quote(Array $services=array('electricity'),Array $extra=array(),$period=6,$tenants=1,$postcode='m1 1dz'){
 		$quotes=$errors=array();
 		foreach ($services as $service){
 			try {
-				$quotes[$service]=$this->get_service_quote($service,$extra[$service],$period,$tenants);
-				$quotes[$service]["human_name"]=$this->insert_human_name($service);
+				$quotes[$service]=$this->get_service_quote($service,$extra[$service],$period,$tenants,$postcode);
 			}
 			catch (Exception $e){
 				$errors[]=$e->getMessage();
 			}
+			// $quotes[$service]["human_name"]=$this->insert_human_name($service);
 		}
 		if (!empty($errors)){
 			foreach ($this->html_error as $n => $html){
@@ -39,8 +39,8 @@ class Glide {
 		return $this->calculate_totals($quotes);
 	}
 
-	private function get_service_quote($service,$extra,$period,$tenants){
-		$query=array('service'=>$service,'period'=>$period,'extra'=>$extra,'tenants'=>$tenants,'key'=>$this->api_key);
+	private function get_service_quote($service,$extra,$period,$tenants,$postcode){
+		$query=array('postcode'=>$postcode,'minTerm'=>$period,'extra'=>$extra,'capacity'=>$tenants,'key'=>$this->api_key,$service=>true);
 		$res=$this->_json_post($this->url,$query);
 		$res_arr=json_decode($res);
 		if ($res_arr===false or $res_arr===null){
@@ -52,7 +52,7 @@ class Glide {
 				throw new Exception('The JSON data could not be parsed.');
 			}
 		}
-		return is_array($res_arr) ? $res_arr : $res;
+		return $res_arr;
 	}
 
 	private function insert_human_name($service){
