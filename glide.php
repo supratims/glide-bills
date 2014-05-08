@@ -85,6 +85,7 @@ class Glide {
 		}
 		$res=$this->send_request($data,'signUp/quote/allServices');
 		if ($res['error']==1){
+			// this hack is needed until Glide return a simple "0" or similar for unable to provide water reponse
 			if (!$this->postcode_no_water and strpos($res['message'],'We are unable to supply water')!==false){
 				$this->postcode_no_water=true;
 				$res=$this->signUp_quote_allServices();
@@ -94,14 +95,6 @@ class Glide {
 			}
 		}
 		return $res;
-	}
-
-	private function exception_no_water(){
-		throw new GlideException('It is not possible to get a water quote for this postcode.');
-	}
-
-	private function exception_message($res){
-		throw new GlideException('The Glide server reported an error: '.$res['message']);
 	}
 
 	function signUp_quote_servicePrice($service){
@@ -132,6 +125,14 @@ class Glide {
 			$this->exception_message($res);
 		}
 		return $res;
+	}
+
+	private function exception_no_water(){
+		throw new GlideException('It is not possible to get a water quote for this postcode.');
+	}
+
+	private function exception_message($res){
+		throw new GlideException('The Glide server reported an error: '.$res['message']);
 	}
 
 	private function valid_signUp_quote(){
@@ -180,8 +181,8 @@ class Glide {
 		return $res_arr;
 	}
 
-	private function insert_human_name($service){
-		return $this->glide_human_name[$service] || ucfirst($service);
+	private function service_name($service){
+		return $this->service_names[$service] || ucfirst($service);
 	}
 
 	// from http://www.lornajane.net/posts/2011/posting-json-data-with-php-curl
@@ -199,6 +200,7 @@ class Glide {
 		$result=curl_exec($ch);
 		return $result;
 	}
+
 	private function _file_save($file,$string,$overwrite=false){
 		$fh=@fopen($file,$overwrite ? 'w' : 'a');
 		if (!empty($fh)){
