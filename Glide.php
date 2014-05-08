@@ -5,8 +5,8 @@ class Glide {
 	),'portal'=>array(
 	),'signUp'=>array(
 		'payment'=>array(
-			'registerCard',
-			'getClientAddresses',
+			'registerCard'=>true,
+			'getClientAddresses'=>true,
 		),
 		'quote'=>array(
 			'allServices'=>true,
@@ -36,7 +36,7 @@ class Glide {
 
 	function __construct($api_key){
 		if (empty($api_key)){
-			throw Exception('You must set a valid Glide API key.');
+			throw new Exception('You must set a valid Glide API key.');
 		}
 		$this->api_key=$api_key;
 		$this->services=array_keys($this->service_names);
