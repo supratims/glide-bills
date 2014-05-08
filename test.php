@@ -1,5 +1,5 @@
 <?php
-include 'glide.php';
+include 'Glide.php';
 
 class testGlide extends PHPUnit_Framework_TestCase {
 	private $glide;
