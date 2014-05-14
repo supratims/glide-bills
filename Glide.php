@@ -5,18 +5,18 @@ class Glide {
 	),'portal'=>array(
 	),'signUp'=>array(
 		'payment'=>array(
-			'registerCard'=>true,
-			'getClientAddresses'=>true,
+			'registerCard'=>false,
+			'getClientAddresses'=>false,
 		),
 		'quote'=>array(
 			'allServices'=>true,
 			'servicePrice'=>true,
 			'telephoneConnectionCharge'=>true,
-			'broadbandActivationCharge'=>true,
-			'broadbandAvailability'=>true,
-			'telephoneConnectionType'=>true,
-			'telephoneAddress'=>true,
-			'email'=>true,
+			'broadbandActivationCharge'=>false,
+			'broadbandAvailability'=>false,
+			'telephoneConnectionType'=>false,
+			'telephoneAddress'=>false,
+			'email'=>false,
 		),
 	),);
 	protected $service_names=array('gas'=>'Gas','electricity'=>'Electricity','water'=>'Water','telephone'=>'Phone','broadband'=>'Internet','tv'=>'TV license');
@@ -33,6 +33,7 @@ class Glide {
 	public $tenants=0;
 	public $term=0;
 	public $broadbandTypes=array('llu24s','llu24p','bt24s');
+	public $telOrderTypes=array('restart', 'takeover', 'transfer', 'convert','new');
 	public $broadbandType='';
 
 	function __construct($api_key){
@@ -48,6 +49,19 @@ class Glide {
 		return $this->service_names;
 	}
 
+	function get_methods(){
+		foreach ($this->methods as $master => $items){
+			foreach ($items as $item => $functions){
+				foreach ($functions as $function => $exists){
+					if ($exists){
+						$return[$master.'_'.$item.'_'.$function]=$master.'/'.$item.'/'.$function;
+					}
+				}
+			}
+		}
+		return $return;
+	}
+
 	function set_postcode($postcode){
 		$this->postcode_no_water=false;
 		$this->postcode=$postcode;
@@ -61,6 +75,15 @@ class Glide {
 
 	function set_tenants($tenants){
 		$this->tenants=$tenants;
+		return $this;
+	}
+
+	function set_data($data){
+		foreach ($data as $key => $val){
+			if (isset($this->$key)){
+				$this->$key=$val;
+			}
+		}
 		return $this;
 	}
 
@@ -106,13 +129,8 @@ class Glide {
 		return $this->return_data($res);
 	}
 
-	private function return_data($res){
-		if ($this->inc_data_in_quote){
-			$res['postcode']=$this->postcode;
-			$res['tenants']=$this->tenants;
-			$res['term']=$this->term;
-		}
-		return $res;
+	function signUp_quote_telephoneConnectionCharge(){
+
 	}
 
 	function signUp_quote_servicePrice($service){
@@ -143,6 +161,15 @@ class Glide {
 			$this->exception_message($res);
 		}
 		return $this->return_data($res);
+	}
+
+	private function return_data($res){
+		if ($this->inc_data_in_quote){
+			$res['postcode']=$this->postcode;
+			$res['tenants']=$this->tenants;
+			$res['term']=$this->term;
+		}
+		return $res;
 	}
 
 	private function exception_no_water(){
