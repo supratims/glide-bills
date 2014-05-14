@@ -43,6 +43,10 @@ class Glide {
 		return $this;
 	}
 
+	function get_services(){
+		return $rhis->service_names;
+	}
+
 	function set_postcode($postcode){
 		$this->postcode_no_water=false;
 		$this->postcode=$postcode;
@@ -61,7 +65,7 @@ class Glide {
 
 	function set_broadbandType($broadbandType){
 		if (!in_array($broadbandType,$this->broadbandTypes)){
-			throw new GlideValidException('You must choose a valid broadband type.');
+			throw new GlideException('You must choose a valid broadband type.');
 		}
 		$this->broadbandType=$broadbandType;
 		return $this;
@@ -109,7 +113,7 @@ class Glide {
 			'minTerm'=>$this->term,
 		);
 		if (!in_array($service,$this->services)){
-			throw new GlideValidException('The selected service ('.$service.') is not valid.');
+			throw new GlideException('The selected service ('.$service.') is not valid.');
 		}
 		$data[$service]=true;
 		if ($service=='water' and $this->postcode_no_water){
@@ -117,7 +121,7 @@ class Glide {
 		}
 		if ($service=='broadband'){
 			if (empty($this->broadbandType)){
-				throw new GlideValidException('You must enter a broadband type to check broadband prices.');
+				throw new GlideException('You must enter a broadband type to check broadband prices.');
 			}
 			$data['broadbandType']=$this->broadbandType;
 		}
@@ -136,21 +140,21 @@ class Glide {
 	}
 
 	private function exception_message($res){
-		throw new GlideException('The Glide server reported an error: '.$res['message']);
+		throw new Exception('The Glide server reported an error: '.$res['message']);
 	}
 
 	private function valid_signUp_quote(){
 		if (empty($this->postcode)){
-			$errors[]='No postcode.';
+			$errors['postcode']='No postcode.';
 		}
 		if (empty($this->tenants)){
-			$errors[]='No tenants.';
+			$errors['tenants']='No tenants.';
 		}
 		if (empty($this->term)){
-			$errors[]='No term.';
+			$errors['term']='No term.';
 		}
 		if (!empty($errors)){
-			throw new GlideValidException('The following data input errors have occured:'."<br/>\n".implode("<br/>\n",$errors));
+			throw new GlideException('There was a problem with the information submitted.',$errors);
 		}
 	}
 
@@ -162,7 +166,7 @@ class Glide {
 		$methods=$this->methods;
 		foreach ($check_route as $step){
 			if (!isset($methods[$step])){
-				throw new GlideValidException('The route '.$route.' could not be found. It failed looking for "'.$step.'"');
+				throw new GlideException('The route '.$route.' could not be found. It failed looking for "'.$step.'"');
 			}
 			$methods=$methods[$step];
 		}
@@ -175,11 +179,11 @@ class Glide {
 		$res_arr=json_decode($res,true);
 		if ($res_arr===false or $res_arr===null){
 			if (empty($res)){
-				throw new GlideException('No data was returned from '.$url.'.');
+				throw new Exception('No data was returned from '.$url.'.');
 			}
 			else {
 				$this->_file_save($this->log_dir.'/glide_error.html',$res,true);
-				throw new GlideException('The JSON data could not be parsed from '.$url.'.');
+				throw new Exception('The JSON data could not be parsed from '.$url.'.');
 			}
 		}
 		return $res_arr;
@@ -218,10 +222,15 @@ class Glide {
 	}
 }
 
-class GlideValidException extends Exception {
-	
-}
-
 class GlideException extends Exception {
+	private $errors=array();
 
+	function __construct($message,$errors=null){
+		$this->errors=$errors;
+		parent::__construct($message);
+	}
+
+	function get_errors(){
+		return $this->errors;
+	}
 }

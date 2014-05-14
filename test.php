@@ -36,25 +36,40 @@ class testGlide extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGlideExceptionNoPostcode(){
-		$this->setExpectedException('GlideValidException');
-		$this->glide->set_tenants($this->tenants)->set_term($this->term)->signUp_quote_allServices();
+		try {
+			$this->glide->set_tenants($this->tenants)->set_term($this->term)->signUp_quote_allServices();
+		}
+		catch (GlideException $e){
+			$errors=$e->get_errors();
+		}
+		$this->assertEquals(array_keys($errors),array('postcode'));
 	}
 
 	function testGlideExceptionNoTerm(){
-		$this->setExpectedException('GlideValidException');
-		$this->glide->set_postcode($this->postcode)->set_tenants($this->tenants)->signUp_quote_allServices();
+		try {
+			$this->glide->set_postcode($this->postcode)->set_tenants($this->tenants)->signUp_quote_allServices();
+		}
+		catch (GlideException $e){
+			$errors=$e->get_errors();
+		}
+		$this->assertEquals(array_keys($errors),array('term'));
 	}
 
 	function testGlideExceptionNoTenants(){
-		$this->setExpectedException('GlideValidException');
-		$this->glide->set_postcode($this->postcode)->set_term($this->term)->signUp_quote_allServices();
+		try {
+			$this->glide->set_postcode($this->postcode)->set_term($this->term)->signUp_quote_allServices();
+		}
+		catch (GlideException $e){
+			$errors=$e->get_errors();
+		}
+		$this->assertEquals(array_keys($errors),array('tenants'));
 	}
 
 	function testGlideRouteFailure(){
         $method=new ReflectionMethod('Glide','send_request');
  
         $method->setAccessible(TRUE);
-		$this->setExpectedException('GlideValidException');
+		$this->setExpectedException('GlideException');
  
         $method->invoke($this->glide_new(),array(),'made/up/route');
     }
