@@ -44,7 +44,7 @@ class Glide {
 	}
 
 	function get_services(){
-		return $rhis->service_names;
+		return $this->service_names;
 	}
 
 	function set_postcode($postcode){
