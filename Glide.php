@@ -103,7 +103,7 @@ class Glide {
 				$this->exception_message($res);
 			}
 		}
-		return return_data($res);
+		return $this->return_data($res);
 	}
 
 	private function return_data($res){
@@ -142,7 +142,7 @@ class Glide {
 			}
 			$this->exception_message($res);
 		}
-		return return_data($res);
+		return $this->return_data($res);
 	}
 
 	private function exception_no_water(){
