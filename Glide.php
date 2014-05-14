@@ -25,6 +25,7 @@ class Glide {
 	private $api_key;
 	private $services;
 	private $postcode_no_water=false;
+	private $inc_data_in_quote=true;
 
 	public $log_html=true;
 	public $log_dir='logs';
@@ -102,6 +103,15 @@ class Glide {
 				$this->exception_message($res);
 			}
 		}
+		return return_data($res);
+	}
+
+	private function return_data($res){
+		if ($this->inc_data_in_quote){
+			$res['postcode']=$this->postcode;
+			$res['tenants']=$this->tenants;
+			$res['term']=$this->term;
+		}
 		return $res;
 	}
 
@@ -132,7 +142,7 @@ class Glide {
 			}
 			$this->exception_message($res);
 		}
-		return $res;
+		return return_data($res);
 	}
 
 	private function exception_no_water(){
