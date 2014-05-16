@@ -21,10 +21,9 @@ class Glide {
 	),);
 	protected $service_names=array('gas'=>'Gas','electricity'=>'Electricity','water'=>'Water','telephone'=>'Phone','broadband'=>'Internet','tv'=>'TV license');
 
-	private $api_key;
-	private $services;
+	protected $api_key;
+	protected $services;
 
-	public $log_html=true;
 	public $log_dir='logs';
 	public $broadbandTypes=array('llu24s','llu24p','bt24s');
 	public $telOrderTypes=array('restart', 'takeover', 'transfer', 'convert','new');
@@ -53,39 +52,6 @@ class Glide {
 			}
 		}
 		return $return;
-	}
-
-	function set_postcode($postcode){
-		$this->postcode_no_water=false;
-		$this->postcode=$postcode;
-		return $this;
-	}
-
-	function set_term($term){
-		$this->term=$term;
-		return $this;
-	}
-
-	function set_tenants($tenants){
-		$this->tenants=$tenants;
-		return $this;
-	}
-
-	function set_data($data){
-		foreach ($data as $key => $val){
-			if (isset($this->$key)){
-				$this->$key=$val;
-			}
-		}
-		return $this;
-	}
-
-	function set_broadbandType($broadbandType){
-		if (!in_array($broadbandType,$this->broadbandTypes)){
-			throw new GlideException('You must choose a valid broadband type.');
-		}
-		$this->broadbandType=$broadbandType;
-		return $this;
 	}
 
 	function __call($name,$args){
