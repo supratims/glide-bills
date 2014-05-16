@@ -85,6 +85,53 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(array_keys($errors),array('service'));
 	}
 
+	/*********************
+
+		# fails with any value tested so far:
+
+	function testGlideTelephoneConnectionTypeNumber1(){
+		try {
+			$res=$this->glide->signUp_quote_telephoneConnectionType(array(
+				'cli'=>'+44.01617631111',
+				'cli'=>'00441617631111',
+				'cli'=>'0161 763 1111',
+			));
+		}
+		catch (GlideException $e){
+			echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL;
+		}
+		print_r($res);
+		$this->assertTrue(is_array($res));
+	}
+	*********************/
+
+	function testGlideTelephoneConnectionTypeRef(){
+		try {
+			$res=$this->glide->signUp_quote_telephoneConnectionType(array(
+				'addressReference'=>'A14321522680',
+			));
+		}
+		catch (GlideException $e){
+			echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL;
+		}
+		$this->assertTrue(is_array($res));
+	}
+
+	function testGlidetelephoneAddress(){
+		try {
+			$res=$this->glide->signUp_quote_telephoneAddress(array(
+				'buildingNumber'=>'26',
+				'thoroughFare'=>'Lever Street',
+				'town'=>'Manchester',
+				'postcode'=>'M1 1DZ',
+			));
+		}
+		catch (GlideException $e){
+			echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL;
+		}
+		$this->assertTrue(is_array($res));
+	}
+
 	function testGlideRouteFailure(){
         $method=new ReflectionMethod('Glide','send_request');
  
