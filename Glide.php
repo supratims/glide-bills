@@ -30,7 +30,7 @@ class Glide {
 
 	function __construct($api_key){
 		if (empty($api_key)){
-			throw new Exception('You must set a valid Glide API key.');
+			throw new GlideException('You must set a valid Glide API key.');
 		}
 		$this->api_key=$api_key;
 		$this->services=array_keys($this->service_names);
@@ -67,7 +67,7 @@ class Glide {
 			if (method_exists($this,$error_method)){
 				return $this->$error_method($res,$data);
 			}
-			$this->exception_message($res);
+			$this->exception_message($res,$data);
 		}
 		return $this->return_data($res,$name);
 	}
@@ -123,6 +123,7 @@ class Glide {
 		if (empty($data['broadbandType'])){
 			$errors['broadbandType']='You must enter a broadband type to check broadband prices.';
 		}
+		$data['minTerm']=$data['term'];
 		$data['type']=$data['broadbandType'];
 		$this->valid_check_errors($errors);
 		return $data;
@@ -139,7 +140,7 @@ class Glide {
 	}
 
 	private function exception_message($res,Array $data=array()){
-		throw new Exception('The Glide server reported an error: '.$res['message']);
+		throw new GlideException('The Glide server reported an error: '.$res['message'].(!empty($data) ? echo_array($data,true) : ''));
 	}
 
 	private function send_request(Array $data,$route){
@@ -163,11 +164,11 @@ class Glide {
 		$res_arr=json_decode($res,true);
 		if ($res_arr===false or $res_arr===null){
 			if (empty($res)){
-				throw new Exception('No data was returned from '.$url.'.');
+				throw new GlideException('No data was returned from '.$url.'.');
 			}
 			else {
 				$this->_file_save($this->log_dir.'/glide_error.html',$res,true);
-				throw new Exception('The JSON data could not be parsed from '.$url.'.');
+				throw new GlideException('The JSON data could not be parsed from '.$url.'.');
 			}
 		}
 		return $res_arr;
