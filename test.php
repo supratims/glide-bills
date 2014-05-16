@@ -3,9 +3,11 @@ include 'Glide.php';
 
 class testGlide extends PHPUnit_Framework_TestCase {
 	private $glide;
-	private $postcode='m1 1dz';
-	private $tenants=5;
-	private $term=12;
+	private $data=array(
+		'postcode'=>'m1 1dz',
+		'tenants'=>5,
+		'term'=>12,
+	);
 
 	function __construct(){
 		$this->glide=$this->glide_new();
@@ -19,25 +21,29 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		return new Glide($api_key);
 	}
 
-	private function quote_setup(){
-		$this->glide->set_postcode($this->postcode)->set_tenants($this->tenants)->set_term($this->term);
+	private function setup_services(){
+		$services=$this->glide->get_services();
+		foreach ($services as $name => $title){
+			$arr[$name]=true;
+		}
+		return $arr;
 	}
 
-	function testGlideQuoteServicesReturnsArray(){
-		$this->quote_setup();
-		$res=$this->glide->signUp_quote_allServices();
-		$this->assertTrue(is_array($res));
-	}
+    function testGlideQuoteServicesReturnsArray(){
+    	$res=$this->glide->signUp_quote_allServices($this->data + $this->setup_services());
+    	$this->assertTrue(is_array($res));
+    }
 
 	function testGlideQuoteServiceReturnsArray(){
-		$this->quote_setup();
-		$res=$this->glide->signUp_quote_servicePrice('electricity');
+		$res=$this->glide->signUp_quote_servicePrice($this->data + array('service'=>'electricity'));
 		$this->assertTrue(is_array($res));
 	}
 
 	function testGlideExceptionNoPostcode(){
 		try {
-			$this->glide->set_tenants($this->tenants)->set_term($this->term)->signUp_quote_allServices();
+			$data=$this->data;
+			unset($data['postcode']);
+			$res=$this->glide->signUp_quote_allServices($data);
 		}
 		catch (GlideException $e){
 			$errors=$e->get_errors();
@@ -47,7 +53,9 @@ class testGlide extends PHPUnit_Framework_TestCase {
 
 	function testGlideExceptionNoTerm(){
 		try {
-			$this->glide->set_postcode($this->postcode)->set_tenants($this->tenants)->signUp_quote_allServices();
+			$data=$this->data;
+			unset($data['term']);
+			$res=$this->glide->signUp_quote_allServices($data);
 		}
 		catch (GlideException $e){
 			$errors=$e->get_errors();
@@ -57,12 +65,24 @@ class testGlide extends PHPUnit_Framework_TestCase {
 
 	function testGlideExceptionNoTenants(){
 		try {
-			$this->glide->set_postcode($this->postcode)->set_term($this->term)->signUp_quote_allServices();
+			$data=$this->data;
+			unset($data['tenants']);
+			$res=$this->glide->signUp_quote_allServices($data);
 		}
 		catch (GlideException $e){
 			$errors=$e->get_errors();
 		}
 		$this->assertEquals(array_keys($errors),array('tenants'));
+	}
+
+	function testGlideExceptionWrongService(){
+		try {
+			$res=$this->glide->signUp_quote_servicePrice($this->data + array('service'=>'not-a-service'));
+		}
+		catch (GlideException $e){
+			$errors=$e->get_errors();
+		}
+		$this->assertEquals(array_keys($errors),array('service'));
 	}
 
 	function testGlideRouteFailure(){
