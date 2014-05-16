@@ -119,6 +119,15 @@ class Glide {
 		return $data;
 	}
 
+	function valid_sigUp_quote_broadbandActivationCharge(Array $data){
+		if (empty($data['broadbandType'])){
+			$errors['broadbandType']='You must enter a broadband type to check broadband prices.';
+		}
+		$data['type']=$data['broadbandType'];
+		$this->valid_check_errors($errors);
+		return $data;
+	}
+
 	private function valid_check_errors($errors){
 		if (!empty($errors)){
 			throw new GlideException('There was a problem with the information submitted.',$errors);
