@@ -76,7 +76,7 @@ class Glide {
 		return $this->return_data($res,$name);
 	}
 
-	function error_signUp_quote_allServices($res,Array $data){
+	private function error_signUp_quote_allServices($res,Array $data){
 		if (isset($data['water']) and strpos($res['message'],'We are unable to supply water')!==false){
 			unset($data['water']);
 			return $res=$this->signUp_quote_allServices($data);
@@ -84,9 +84,9 @@ class Glide {
 		$this->exception_message($res,$data);
 	}
 
-	function valid_signUp_quote(Array $data,&$errors=array()){
-		if (empty($data['postcode'])){
-			$errors['postcode']='No postcode.';
+	private function valid_signUp_quote(Array $data,&$errors=array()){
+		if (!Glide::_make_postcode($data['postcode'])){
+			$errors['postcode']='The postcode entered was not valid.';
 		}
 		if (empty($data['tenants'])){
 			$errors['tenants']='No tenants.';
@@ -97,7 +97,7 @@ class Glide {
 		return $data;
 	}
 
-	function valid_signUp_quote_allServices(Array $data,Array $extra=null){
+	private function valid_signUp_quote_allServices(Array $data,Array $extra=null){
 		$data=$this->valid_signUp_quote($data,$errors);
 		if (isset($extra['all'])){
 			$services=array_keys($this->get_services());
@@ -114,7 +114,7 @@ class Glide {
 		return $data;
 	}
 
-	function valid_signUp_quote_servicePrice(Array $data){
+	private function valid_signUp_quote_servicePrice(Array $data){
 		$data=$this->valid_signUp_quote($data,$errors);
 		if (!isset($this->service_names[$data['service']])){
 			$errors['service']='The selected service ('.$data['service'].') is not valid.';
@@ -129,7 +129,7 @@ class Glide {
 		return $data;
 	}
 
-	function valid_signUp_quote_broadbandActivationCharge(Array $data){
+	private function valid_signUp_quote_broadbandActivationCharge(Array $data){
 		if (empty($data['broadbandType'])){
 			$errors['broadbandType']='You must enter a broadband type to check broadband prices.';
 		}
@@ -139,7 +139,7 @@ class Glide {
 		return $data;
 	}
 
-	private function valid_check_errors($errors=null,$data=null){
+	protected function valid_check_errors($errors=null,$data=null){
 		if (!empty($errors)){
 			throw new GlideException('There was a problem with the information submitted.',array(
 				'errors'=>$errors,
@@ -148,17 +148,17 @@ class Glide {
 		}
 	}
 
-	private function return_data($res){
+	protected function return_data($res){
 		return $res;
 	}
 
-	private function exception_message($res,Array $data=array()){
+	protected function exception_message($res,Array $data=array()){
 		throw new GlideException('The Glide server reported an error: '.$res['message'],array(
 			'data'=>$data,
 		));
 	}
 
-	private function send_request(Array $data,$route){
+	protected function send_request(Array $data,$route){
 		if ($route[0]=='/'){
 			$route=substr($route,1);
 		}
@@ -197,7 +197,7 @@ class Glide {
 	}
 
 	// from http://www.lornajane.net/posts/2011/posting-json-data-with-php-curl
-	private function _json_post($url,$data){                                                                   
+	protected function _json_post($url,$data){                                                                   
 		$data_string=json_encode($data);
 
 		$ch=curl_init($url);
@@ -212,7 +212,7 @@ class Glide {
 		return $result;
 	}
 
-	private function _file_save($file,$string,$overwrite=false){
+	protected function _file_save($file,$string,$overwrite=false){
 		$fh=@fopen($file,$overwrite ? 'w' : 'a');
 		if (!empty($fh)){
 			fwrite($fh,$string);
@@ -222,6 +222,54 @@ class Glide {
 		else {
 			return false;
 		}
+	}
+
+	protected function _make_postcode(&$string,$blank=null){
+		$string=trim($string);
+		if (!empty($string)){
+			// Permitted letters depend upon their position in the postcode.
+			$alpha1="[abcdefghijklmnoprstuwyz]"; // Character 1
+			$alpha2="[abcdefghklmnopqrstuvwxy]"; // Character 2
+			$alpha3="[abcdefghjkpmnrstuvwxy]"; // Character 3
+			$alpha4="[abehmnprvwxy]"; // Character 4
+			$alpha5="[abdefghjlnpqrstuwxyz]"; // Character 5
+			// Expression for postcodes: AN NAA, ANN NAA, AAN NAA, and AANN NAA with a space
+			$pcexp[0]='/^('.$alpha1.'{1}'.$alpha2.'{0,1}[0-9]{1,2})([\s]{0,})([0-9]{1}'.$alpha5.'{2})$/';
+			// Expression for postcodes: ANA NAA
+			$pcexp[1]='/^('.$alpha1.'{1}[0-9]{1}'.$alpha3.'{1})([\s]{0,})([0-9]{1}'.$alpha5.'{2})$/';
+			// Expression for postcodes: AANA NAA
+			$pcexp[2]='/^('.$alpha1.'{1}'.$alpha2.'{1}[0-9]{1}'.$alpha4.')([\s]{0,})([0-9]{1}'.$alpha5.'{2})$/';
+			// Exception for the special postcode GIR 0AA
+			$pcexp[3]='/^(gir)(0aa)$/';
+			// Standard BFPO numbers
+			$pcexp[4]='/^(bfpo)([0-9]{1,4})$/';
+			// c/o BFPO numbers
+			$pcexp[5]='/^(bfpo)(c\/o[0-9]{1,3})$/';
+			// Overseas Territories
+			$pcexp[6]='/^([a-z]{4})(1zz)$/i';
+			// Load up the string to check, converting into lowercase
+			$string=strtolower($string);
+			// Assume we are not going to find a valid postcode
+			$valid=false;
+			// Check the string against the six types of postcodes
+			foreach ($pcexp as $regexp){
+				if (preg_match($regexp,$string,$matches)){
+					// Load new postcode back into the form element
+					$string=strtoupper($matches[1].' '.$matches[3]);
+					// Take account of the special BFPO c/o format
+					$string=preg_replace ('/C\/O/','c/o ',$string);
+					// Remember that we have found that the code is valid and break from loop
+					$valid=true;
+					break;
+				}
+			}
+			return $valid;
+		}
+		elseif ($blank){
+			$string=null;
+			return true;
+		}
+		return false;
 	}
 }
 
