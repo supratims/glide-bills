@@ -23,7 +23,7 @@ class Glide {
 
 	protected $api_key;
 	protected $services;
-	protected $error_data;
+	protected $last_sent;
 
 	public $log_dir='logs';
 	public $broadbandTypes=array('llu24s','llu24p','bt24s');
@@ -36,6 +36,10 @@ class Glide {
 		$this->api_key=$api_key;
 		$this->services=array_keys($this->service_names);
 		return $this;
+	}
+
+	function get_last_sent(){
+		return $this->last_sent;
 	}
 
 	function get_services(){
@@ -177,6 +181,7 @@ class Glide {
 		$data['key']=$this->api_key;
 		$url=$this->url.$route.'.json';
 
+		$this->last_sent=$data;
 		$res=$this->_json_post($url,$data);
 
 		$res_arr=json_decode($res,true);

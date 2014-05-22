@@ -29,6 +29,10 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		return $arr;
 	}
 
+	private function handle_exception(GlideException $e){
+		echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL.'Data: '.print_r($e->get_data(),true).PHP_EOL.'Errors: '.print_r($e->get_errors()).PHP_EOL;
+	}
+
     function testGlideQuoteServicesReturnsArray(){
     	$res=$this->glide->signUp_quote_allServices($this->service_data + $this->setup_services());
     	$this->assertTrue(is_numeric($res['gas']['monthly_fee']));
@@ -118,6 +122,20 @@ class testGlide extends PHPUnit_Framework_TestCase {
 	}
 	*********************/
 
+	function testGlideBroadbandActivationCharge(){
+		try {
+			$res=$this->glide->signUp_quote_broadbandActivationCharge(array(
+				'term'=>12,
+				'broadbandType'=>'llu24s',
+			));
+		}
+		catch (GlideException $e){
+			$this->handle_exception($e);
+		}
+		$this->assertTrue(isset($res['price']));
+		$this->assertTrue(empty($res['price']) or is_numeric($res['price']));
+	}
+
 	function testGlideTelephoneConnectionCharge(){
 		try {
 			$res=$this->glide->signUp_quote_telephoneConnectionCharge(array(
@@ -128,7 +146,7 @@ class testGlide extends PHPUnit_Framework_TestCase {
 			));
 		}
 		catch (GlideException $e){
-			echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL;
+			$this->handle_exception($e);
 		}
 		$this->assertTrue(is_numeric($res['total']));
 		$this->assertTrue(is_numeric($res['per_tenant']));
@@ -141,7 +159,7 @@ class testGlide extends PHPUnit_Framework_TestCase {
 			));
 		}
 		catch (GlideException $e){
-			echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL;
+			$this->handle_exception($e);
 		}
 		$this->assertTrue(in_array($res['type'],$this->glide->telOrderTypes));
 	}
@@ -156,7 +174,7 @@ class testGlide extends PHPUnit_Framework_TestCase {
 			));
 		}
 		catch (GlideException $e){
-			echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL;
+			$this->handle_exception($e);
 		}
 		$this->assertTrue(strlen($res['addressReference'])>0);
 		$this->assertTrue(is_array($res['listOfTechnologies']));
