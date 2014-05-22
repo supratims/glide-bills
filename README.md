@@ -12,8 +12,6 @@ You can install Glide with [Composer](http://getcomposer.org). Add the following
 
 Written by [Mike Lehan](http://twitter.com/m1ke) and [StuRents.com](http://sturents.com).
 
-It is based on the [Glide Ruby implementation](https://github.com/vpacher/glide) by Volker Pacher.
-
 ### Documentation
 
 A PDF API specification used to build this library, provided by Glide, can be found in `docs/`. I have been unable to find a copy of this made available elsewhere on the web.
