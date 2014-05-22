@@ -201,6 +201,16 @@ class Glide {
 		return $this->service_names[$service] || ucfirst($service);
 	}
 
+	/* Utility functions */
+	/* These functions would ideally be provided by third party dependencies pulled down by
+		Composer. At present it's difficult to work out which libraries should be used and 
+		want to avoid overkill.
+		
+		For any developers working on forking this project replacing these with external
+		dependencies would be a good task to work on - will require a small amount of changes
+		to the main library code to check method names and parameters
+	*/
+
 	// from http://www.lornajane.net/posts/2011/posting-json-data-with-php-curl
 	protected function _json_post($url,$data){                                                                   
 		$data_string=json_encode($data);
