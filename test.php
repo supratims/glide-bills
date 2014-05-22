@@ -3,7 +3,7 @@ include 'Glide.php';
 
 class testGlide extends PHPUnit_Framework_TestCase {
 	private $glide;
-	private $data=array(
+	private $service_data=array(
 		'postcode'=>'m1 1dz',
 		'tenants'=>5,
 		'term'=>12,
@@ -30,18 +30,31 @@ class testGlide extends PHPUnit_Framework_TestCase {
 	}
 
     function testGlideQuoteServicesReturnsArray(){
-    	$res=$this->glide->signUp_quote_allServices($this->data + $this->setup_services());
-    	$this->assertTrue(is_array($res));
+    	$res=$this->glide->signUp_quote_allServices($this->service_data + $this->setup_services());
+    	$this->assertTrue(is_numeric($res['gas']['monthly_fee']));
+    	$this->assertTrue(is_numeric($res['electricity']['monthly_fee']));
+    	$this->assertTrue(is_numeric($res['telephone']['monthly_fee']));
+    	$this->assertTrue(is_numeric($res['tv']['monthly_fee']));
+    }
+
+    function testGlideQuoteServicesAllReturnsArray(){
+    	$res=$this->glide->signUp_quote_allServices($this->service_data,array('all'=>true));
+    	$this->assertTrue(is_numeric($res['gas']['monthly_fee']));
+    	$this->assertTrue(is_numeric($res['electricity']['monthly_fee']));
+    	$this->assertTrue(is_numeric($res['telephone']['monthly_fee']));
+    	$this->assertTrue(is_numeric($res['tv']['monthly_fee']));
     }
 
 	function testGlideQuoteServiceReturnsArray(){
-		$res=$this->glide->signUp_quote_servicePrice($this->data + array('service'=>'electricity'));
-		$this->assertTrue(is_array($res));
+		$res=$this->glide->signUp_quote_servicePrice($this->service_data + array('service'=>'electricity'));
+    	$this->assertTrue(is_numeric($res['monthly_fee']));
+    	$this->assertTrue(is_numeric($res['tenant_month']));
+    	$this->assertTrue(is_numeric($res['tenant_week']));
 	}
 
 	function testGlideExceptionNoPostcode(){
 		try {
-			$data=$this->data;
+			$data=$this->service_data;
 			unset($data['postcode']);
 			$res=$this->glide->signUp_quote_allServices($data);
 		}
@@ -53,7 +66,7 @@ class testGlide extends PHPUnit_Framework_TestCase {
 
 	function testGlideExceptionNoTerm(){
 		try {
-			$data=$this->data;
+			$data=$this->service_data;
 			unset($data['term']);
 			$res=$this->glide->signUp_quote_allServices($data);
 		}
@@ -65,7 +78,7 @@ class testGlide extends PHPUnit_Framework_TestCase {
 
 	function testGlideExceptionNoTenants(){
 		try {
-			$data=$this->data;
+			$data=$this->service_data;
 			unset($data['tenants']);
 			$res=$this->glide->signUp_quote_allServices($data);
 		}
@@ -77,7 +90,7 @@ class testGlide extends PHPUnit_Framework_TestCase {
 
 	function testGlideExceptionWrongService(){
 		try {
-			$res=$this->glide->signUp_quote_servicePrice($this->data + array('service'=>'not-a-service'));
+			$res=$this->glide->signUp_quote_servicePrice($this->service_data + array('service'=>'not-a-service'));
 		}
 		catch (GlideException $e){
 			$errors=$e->get_errors();
@@ -105,6 +118,22 @@ class testGlide extends PHPUnit_Framework_TestCase {
 	}
 	*********************/
 
+	function testGlideTelephoneConnectionCharge(){
+		try {
+			$res=$this->glide->signUp_quote_telephoneConnectionCharge(array(
+				'tenants'=>5,
+				'period'=>12,
+				'orderType'=>'new',
+				'broadband'=>true,
+			));
+		}
+		catch (GlideException $e){
+			echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL;
+		}
+		$this->assertTrue(is_numeric($res['total']));
+		$this->assertTrue(is_numeric($res['per_tenant']));
+	}
+
 	function testGlideTelephoneConnectionTypeRef(){
 		try {
 			$res=$this->glide->signUp_quote_telephoneConnectionType(array(
@@ -114,7 +143,7 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		catch (GlideException $e){
 			echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL;
 		}
-		$this->assertTrue(is_array($res));
+		$this->assertTrue(in_array($res['type'],$this->glide->telOrderTypes));
 	}
 
 	function testGlidetelephoneAddress(){
@@ -129,7 +158,8 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		catch (GlideException $e){
 			echo PHP_EOL.'Caught exception: '.$e->getMessage().PHP_EOL;
 		}
-		$this->assertTrue(is_array($res));
+		$this->assertTrue(strlen($res['addressReference'])>0);
+		$this->assertTrue(is_array($res['listOfTechnologies']));
 	}
 
 	function testGlideRouteFailure(){

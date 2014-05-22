@@ -57,9 +57,12 @@ class Glide {
 	function __call($name,$args){
 		$route=str_replace('_','/',$name);
 		$data=$args[0];
+		if (isset($args[1])){
+			$extra=$args[1];
+		}
 		$valid_method='valid_'.$name;
 		if (method_exists($this,$valid_method)){
-			$data=$this->$valid_method($data);
+			$data=$this->$valid_method($data,$extra);
 		}
 		$res=$this->send_request($data,$route);
 		if ($res['error']==1){
@@ -93,8 +96,15 @@ class Glide {
 		return $data;
 	}
 
-	function valid_signUp_quote_allServices(Array $data){
+	function valid_signUp_quote_allServices(Array $data,Array $extra=null){
 		$data=$this->valid_signUp_quote($data,$errors);
+		if (isset($extra['all'])){
+			$services=$this->get_services();
+			foreach ($services as &$service){
+				$service=true;
+			}
+			$data+=$services;
+		}
 		$data['capacity']=$data['tenants'];
 		$data['minTerm']=$data['term'];
 		if (!isset($data['broadbandType'])){
