@@ -18,4 +18,4 @@ A PDF API specification used to build this library, provided by Glide, can be fo
 
 ### Testing
 
-Run `phpunit test.php` for a basic test, to be expanded once we actually get more than a 404 from the interface.
+Run `phpunit test.php` to test all implemented interfaces. Other interfaces can be added to tests without changing the class thanks to the `__call` magic method.
