@@ -81,7 +81,7 @@ class Glide {
 			unset($data['water']);
 			return $res=$this->signUp_quote_allServices($data);
 		}
-		$this->exception_message($res);
+		$this->exception_message($res,$data);
 	}
 
 	function valid_signUp_quote(Array $data,&$errors=array()){
