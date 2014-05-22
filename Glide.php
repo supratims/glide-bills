@@ -107,7 +107,7 @@ class Glide {
 		}
 		$data['capacity']=$data['tenants'];
 		$data['minTerm']=$data['term'];
-		if (!isset($data['broadbandType'])){
+		if (empty($data['broadbandType']) or !is_string($data['broadbandType'])){
 			unset($data['broadband']);
 		}
 		$this->valid_check_errors($errors,$data);
