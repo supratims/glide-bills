@@ -126,7 +126,6 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		try {
 			$res=$this->glide->signUp_quote_broadbandActivationCharge(array(
 				'term'=>12,
-				'broadbandType'=>'llu24s',
 			));
 		}
 		catch (GlideException $e){
