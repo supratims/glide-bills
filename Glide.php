@@ -88,11 +88,11 @@ class Glide {
 		if (!Glide::_make_postcode($data['postcode'])){
 			$errors['postcode']='The postcode entered was not valid.';
 		}
-		if (empty($data['tenants'])){
-			$errors['tenants']='No tenants.';
+		if (!isset($data['tenants']) or !is_numeric($data['tenants'])){
+			$errors['tenants']='You must enter a valid number of tenants.';
 		}
-		if (empty($data['term'])){
-			$errors['term']='No term.';
+		if (!isset($data['term']) or !is_numeric($data['term'])){
+			$errors['term']='You must enter a valid contract term.';
 		}
 		return $data;
 	}
