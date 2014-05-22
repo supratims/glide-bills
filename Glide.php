@@ -23,6 +23,7 @@ class Glide {
 
 	protected $api_key;
 	protected $services;
+	protected $error_data;
 
 	public $log_dir='logs';
 	public $broadbandTypes=array('llu24s','llu24p','bt24s');
@@ -109,7 +110,7 @@ class Glide {
 		if (!isset($data['broadbandType'])){
 			unset($data['broadband']);
 		}
-		$this->valid_check_errors($errors);
+		$this->valid_check_errors($errors,$data);
 		return $data;
 	}
 
@@ -124,7 +125,7 @@ class Glide {
 				$errors['broadbandType']='You must enter a broadband type to check broadband prices.';
 			}
 		}
-		$this->valid_check_errors($errors);
+		$this->valid_check_errors($errors,$data);
 		return $data;
 	}
 
@@ -134,13 +135,16 @@ class Glide {
 		}
 		$data['minTerm']=$data['term'];
 		$data['type']=$data['broadbandType'];
-		$this->valid_check_errors($errors);
+		$this->valid_check_errors($errors,$data);
 		return $data;
 	}
 
-	private function valid_check_errors($errors){
+	private function valid_check_errors($errors=null,$data=null){
 		if (!empty($errors)){
-			throw new GlideException('There was a problem with the information submitted.',$errors);
+			throw new GlideException('There was a problem with the information submitted.',array(
+				'errors'=>$errors,
+				'data'=>$data,
+			));
 		}
 	}
 
@@ -149,7 +153,9 @@ class Glide {
 	}
 
 	private function exception_message($res,Array $data=array()){
-		throw new GlideException('The Glide server reported an error: '.$res['message'].(!empty($data) ? echo_array($data,true) : ''));
+		throw new GlideException('The Glide server reported an error: '.$res['message'],array(
+			'data'=>$data,
+		));
 	}
 
 	private function send_request(Array $data,$route){
@@ -173,12 +179,15 @@ class Glide {
 		$res_arr=json_decode($res,true);
 		if ($res_arr===false or $res_arr===null){
 			if (empty($res)){
-				throw new GlideException('No data was returned from '.$url.'.');
+				$err_msg='No data was returned from '.$url.'.';
 			}
 			else {
 				$this->_file_save($this->log_dir.'/glide_error.html',$res,true);
-				throw new GlideException('The JSON data could not be parsed from '.$url.'.');
+				$err_msg='The JSON data could not be parsed from '.$url.'.';
 			}
+			throw new GlideException($err_msg,array(
+				'data'=>$data,
+			));
 		}
 		return $res_arr;
 	}
@@ -218,13 +227,19 @@ class Glide {
 
 class GlideException extends Exception {
 	private $errors=array();
+	private $data=array();
 
-	function __construct($message,$errors=null){
-		$this->errors=$errors;
+	function __construct($message,Array $debug=null){
+		$this->errors=$debug['errors'];
+		$this->data=$debug['data'];
 		parent::__construct($message);
 	}
 
 	function get_errors(){
 		return $this->errors;
+	}
+
+	function get_data(){
+		return $this->data;
 	}
 }
