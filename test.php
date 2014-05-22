@@ -43,6 +43,7 @@ class testGlide extends PHPUnit_Framework_TestCase {
 
     function testGlideQuoteServicesAllReturnsArray(){
     	$res=$this->glide->signUp_quote_allServices($this->service_data,array('all'=>true));
+    	var_dump($res);
     	$this->assertTrue(is_numeric($res['gas']['monthly_fee']));
     	$this->assertTrue(is_numeric($res['electricity']['monthly_fee']));
     	$this->assertTrue(is_numeric($res['telephone']['monthly_fee']));
