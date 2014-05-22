@@ -65,6 +65,9 @@ class Glide {
 		if (method_exists($this,$valid_method)){
 			$data=$this->$valid_method($data,$extra);
 		}
+		elseif (empty($data) or !is_array($data)){
+			throw new GlideException('No data was submitted for the method '.$name.'.');
+		}
 		$res=$this->send_request($data,$route);
 		if ($res['error']==1){
 			$error_method='error_'.$name;
