@@ -99,11 +99,10 @@ class Glide {
 	function valid_signUp_quote_allServices(Array $data,Array $extra=null){
 		$data=$this->valid_signUp_quote($data,$errors);
 		if (isset($extra['all'])){
-			$services=$this->get_services();
+			$services=array_keys($this->get_services());
 			foreach ($services as &$service){
-				$service=true;
+				$data[$service]=true;
 			}
-			$data+=$services;
 		}
 		$data['capacity']=$data['tenants'];
 		$data['minTerm']=$data['term'];
