@@ -1,4 +1,5 @@
 <?php
+
 class Glide {
 	protected $url='https://www.glide.uk.com/api/4.0/';
 	protected $methods=array('frontEnd'=>array(
