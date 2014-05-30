@@ -1,3 +1,5 @@
 glide-rb/
 logs/*
 api_key
+vendor/
+composer.phar

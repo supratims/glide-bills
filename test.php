@@ -1,5 +1,6 @@
 <?php
-include 'Glide.php';
+require 'Glide.php';
+require 'vendor/autoload.php';
 
 class testGlide extends PHPUnit_Framework_TestCase {
 	private $glide;

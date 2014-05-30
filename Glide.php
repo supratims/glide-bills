@@ -211,19 +211,9 @@ class Glide {
 		to the main library code to check method names and parameters
 	*/
 
-	// from http://www.lornajane.net/posts/2011/posting-json-data-with-php-curl
-	protected function _json_post($url,$data){                                                                   
-		$data_string=json_encode($data);
-
-		$ch=curl_init($url);
-		curl_setopt($ch,CURLOPT_CUSTOMREQUEST,"POST");
-		curl_setopt($ch,CURLOPT_POSTFIELDS,$data_string);
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-		curl_setopt($ch,CURLOPT_HTTPHEADER,array(
-			'Content-Type: application/json',
-			'Content-Length: '.strlen($data_string),
-		));
-		$result=curl_exec($ch);
+	protected function _json_post($url,$data){
+		$curl_json=new Curl\Json;
+		$result=$curl_json->post($url,$data)->response;
 		return $result;
 	}
 
