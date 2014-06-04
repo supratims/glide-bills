@@ -27,7 +27,7 @@ class Glide {
 	protected $last_sent;
 
 	public $log_dir='logs';
-	public $broadbandTypes=array('llu24s','llu24p','bt24s');
+	public $broadbandTypes=array('adsls');
 	public $telOrderTypes=array('restart', 'takeover', 'transfer', 'convert','new');
 
 	function __construct($api_key){
@@ -202,7 +202,15 @@ class Glide {
 		return $this->service_names[$service] || ucfirst($service);
 	}
 
+
 	/* Utility functions */
+
+	protected function _json_post($url,$data){
+		$curl_json=new Curl\Json;
+		$result=$curl_json->post($url,$data)->response;
+		return $result;
+	}
+
 	/* These functions would ideally be provided by third party dependencies pulled down by
 		Composer. At present it's difficult to work out which libraries should be used and 
 		want to avoid overkill.
@@ -211,12 +219,6 @@ class Glide {
 		dependencies would be a good task to work on - will require a small amount of changes
 		to the main library code to check method names and parameters
 	*/
-
-	protected function _json_post($url,$data){
-		$curl_json=new Curl\Json;
-		$result=$curl_json->post($url,$data)->response;
-		return $result;
-	}
 
 	protected function _file_save($file,$string,$overwrite=false){
 		$fh=@fopen($file,$overwrite ? 'w' : 'a');
