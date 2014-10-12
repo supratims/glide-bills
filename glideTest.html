@@ -10,6 +10,7 @@
 			e.preventDefault();
 			$('form').each(function() {
 				var formId=$(this).data('formid');
+				$('#result'+formId).html('Loading ...');
 				$.ajax({
 					url: 'uitestGlide.php',
 					type: 'POST',

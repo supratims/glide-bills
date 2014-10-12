@@ -224,6 +224,20 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(sizeof($res)>0);
 	}
 
+	function testGlidesearchPremiseByStreet_error(){
+		try {
+			$res=$this->glide->signUp_address_searchPremiseByStreet(array(
+				'street'=>'51 Lever Street',
+				'town'=>'Manchester'
+			));
+		}
+		catch (GlideException $e){
+			$this->handle_exception($e);
+		}
+		//var_dump($res);
+		$this->assertTrue(strpos($res['error'], 'No matching address records found for')!==false);
+	}
+
 	function testGlidegetPremiseAddress(){
 		try {
 			$res=$this->glide->signUp_address_getPremiseAddress(array(

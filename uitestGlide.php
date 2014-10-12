@@ -34,7 +34,23 @@ $services=$glide->get_services();
 	));
 	//consider moving this to Glide.php
 	$paramFactory=array(
-		
+		'signUp/address/searchPremiseByPostcode'=>array(
+			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz')
+		),					
+		'signUp/address/searchPremiseByOrganisation'=>array(
+			array('name'=>'organisation', 'type'=>'text', 'value'=>'THE LACAMANDA LTD')
+		),					
+		'signUp/address/searchPremiseByStreet'=>array(
+			array('name'=>'street', 'type'=>'text', 'value'=>'Little Lever Street'),
+			array('name'=>'town', 'type'=>'text', 'value'=>'Manchester')
+		),	
+		'signUp/address/getPremiseAddress'=>array(
+			array('name'=>'udprn', 'type'=>'text', 'value'=>'14307716'),
+			array('name'=>'simplified', 'type'=>'checkbox', 'value'=>'on')
+		),						
+		'signUp/address/validatePostcode'=>array(
+			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz')
+		),			
 		'signUp/quote/allServices'=>array(
 			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz'),
 			array('name'=>'tenants', 'type'=>'number', 'value'=>'5'),
@@ -90,6 +106,5 @@ $services=$glide->get_services();
 	echo $methodTmpl->render($methodArray);
 
 ?>
-	<!--<input type="submit" id="">-->
 <?php endif; ?>
 

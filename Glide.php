@@ -11,7 +11,7 @@ class Glide {
 			'searchPremiseByStreet'=>true,
 			'getPremiseAddress'=>true,
 			'validatePostcode'=>true,
-			'cannotFind'=>true
+			'cannotFind'=>false
 		),
 		'payment'=>array(
 			'registerCard'=>false,
