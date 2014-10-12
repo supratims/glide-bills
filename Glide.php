@@ -5,6 +5,14 @@ class Glide {
 	protected $methods=array('frontEnd'=>array(
 	),'portal'=>array(
 	),'signUp'=>array(
+		'address'=>array(
+			'searchPremiseByPostcode'=>true,
+			'searchPremiseByOrganisation'=>true,
+			'searchPremiseByStreet'=>true,
+			'getPremiseAddress'=>true,
+			'validatePostcode'=>true,
+			'cannotFind'=>true
+		),
 		'payment'=>array(
 			'registerCard'=>false,
 			'getClientAddresses'=>false,

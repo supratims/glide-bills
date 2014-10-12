@@ -180,6 +180,108 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(is_array($res['listOfTechnologies']));
 	}
 
+	function testGlidesearchPremiseByPostcode(){
+		try {
+			$res=$this->glide->signUp_address_searchPremiseByPostcode(array(
+				'postcode'=>'M1 1DZ'
+			));
+		}
+		catch (GlideException $e){
+			$this->handle_exception($e);
+		}
+		//var_dump($res);
+		$this->assertTrue(is_array($res));
+		$this->assertTrue(sizeof($res)>0);
+	}
+
+	function testGlidesearchPremiseByOrganisation(){
+		try {
+			$res=$this->glide->signUp_address_searchPremiseByOrganisation(array(
+				'organisation'=>'Acme'
+			));
+		}
+		catch (GlideException $e){
+			$this->handle_exception($e);
+		}
+		//var_dump($res);
+		$this->assertTrue(is_array($res));
+		$this->assertTrue(sizeof($res)>0);
+
+	}
+
+	function testGlidesearchPremiseByStreet(){
+		try {
+			$res=$this->glide->signUp_address_searchPremiseByStreet(array(
+				'street'=>'Lever Street',
+				'town'=>'Manchester'
+			));
+		}
+		catch (GlideException $e){
+			$this->handle_exception($e);
+		}
+		//var_dump($res);
+		$this->assertTrue(is_array($res));
+		$this->assertTrue(sizeof($res)>0);
+	}
+
+	function testGlidegetPremiseAddress(){
+		try {
+			$res=$this->glide->signUp_address_getPremiseAddress(array(
+				'udprn'=>'14307716',
+				'simplified'=>true
+			));
+		}
+		catch (GlideException $e){
+			$this->handle_exception($e);
+		}
+		//var_dump($res);
+		$this->assertTrue(is_array($res));
+		$this->assertTrue(sizeof($res)>0);
+		$this->assertTrue($res['town'] == 'Manchester');
+	}
+
+	function testGlidevalidatePostcode(){
+		try {
+			$res=$this->glide->signUp_address_validatePostcode(array(
+				'postcode'=>'M1 1DZ'
+			));
+		}
+		catch (GlideException $e){
+			$this->handle_exception($e);
+		}
+		//var_dump($res);
+		$this->assertTrue($res['success']);
+	}
+
+	function testGlidevalidatePostcode_error(){
+		try {
+			$res=$this->glide->signUp_address_validatePostcode(array(
+				'postcode'=>'X1'
+			));
+		}
+		catch (GlideException $e){
+			$errors=$e->get_errors();
+			//var_dump($errors);
+		}
+		//var_dump($res);
+		$this->assertEquals($res, NULL);
+	}
+
+	/*
+	function testGlidecannotFind(){
+		//Need to find what this API exactly does.
+		try {
+			$res=$this->glide->signUp_address_cannotFind(array(
+				'udprn'=>'14307716',
+				'simplified'=>true
+			));
+		}
+		catch (GlideException $e){
+			$this->handle_exception($e);
+		}
+		//Find a way to test this.
+	}
+	*/
 	function testGlideRouteFailure(){
         $method=new ReflectionMethod('Glide','send_request');
  
