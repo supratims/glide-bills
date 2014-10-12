@@ -4,7 +4,11 @@
     "license": "MIT",
     "require": {
         "php": ">=5.3.0",
-        "curl/json": "dev-master"
+        "curl/json": "dev-master",
+        "mustache/mustache": "2.0.*",
+        "components/bootstrap": ">=3.0",
+        "components/jquery": ">=1.9"
+
     },
     "autoload": {
         "classmap": ["Glide.php"]
