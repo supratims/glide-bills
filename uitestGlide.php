@@ -20,37 +20,62 @@ $services=$glide->get_services();
 		$arr[$name]=true;
 	}
 
-	$res=$glide->$apiMethod($service_data+$arr);
-	//echo "Results for $api";
-	foreach ($res as $key => $val){
-		//echo $key . " " . $val . "<br>"; 
+	try {
+		$res=$glide->$apiMethod($service_data+$arr);
+		echo json_encode($res);
+	} catch(GlideException $e){
+		echo json_encode(array('error'=>'exception')+$e->get_errors());
 	}
-	echo json_encode($res);
 ?>
 
 <?php else: 
 	$mustache=new Mustache_Engine(array(
    		'loader' => new Mustache_Loader_FilesystemLoader('templates')
 	));
+	//consider moving this to Glide.php
 	$paramFactory=array(
 		'signUp/quote/allServices'=>array(
-			array('name'=>'postcode', 'type'=>'text'),
-			array('name'=>'tenants', 'type'=>'number'),
-			array('name'=>'term', 'type'=>'number'),
+			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz'),
+			array('name'=>'tenants', 'type'=>'number', 'value'=>'5'),
+			array('name'=>'term', 'type'=>'number', 'value'=>'12'),
 			array('name'=>'gas', 'type'=>'checkbox'),
 			array('name'=>'electricity', 'type'=>'checkbox'),
 			array('name'=>'water', 'type'=>'checkbox'),
 			array('name'=>'telephone', 'type'=>'checkbox'),
-			array('name'=>'broadband', 'type'=>'checkbox'),
 			array('name'=>'tv', 'type'=>'checkbox'),
-			array('name'=>'broadbandType', 'type'=>'text')
+			array('name'=>'broadband', 'type'=>'checkbox'),			
+			array('name'=>'broadbandType', 'type'=>'text', 'placeholder'=> 'llu24s, llu24p, bt24s')
+			//array('name'=>'broadbandType', 'type'=>'select', 'options'=>array(array('key'=>'llu24s'), array('key'=>'llu24p'), array('key'=>'bt24s')))
 		),
-		'signUp/quote/servicePrice'=>array(),
-		'signUp/quote/telephoneConnectionCharge'=>array(),
-		'signUp/quote/broadbandActivationCharge'=>array(),
-		'signUp/quote/broadbandAvailability'=>array(),
-		'signUp/quote/telephoneConnectionType'=>array(),
-		'signUp/quote/telephoneAddress'=>array()
+		'signUp/quote/servicePrice'=>array(
+			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz'),
+			array('name'=>'service', 'type'=>'text', 'value'=>'gas'),
+			array('name'=>'tenants', 'type'=>'number', 'value'=>'5'),
+			array('name'=>'term', 'type'=>'number', 'value'=>'12'),
+			array('name'=>'extra', 'type'=>'text', 'placeholder'=> 'llu24s, llu24p, bt24s')
+		),
+		'signUp/quote/telephoneConnectionCharge'=>array(			
+			array('name'=>'tenants', 'type'=>'number', 'value'=>'5'),
+			array('name'=>'term', 'type'=>'number', 'value'=>'12'),
+			array('name'=>'orderType', 'type'=>'text', 'placeholder'=> 'restart, takeover, transfer, convert, new'),
+			array('name'=>'broadband', 'type'=>'checkbox')
+		),
+		'signUp/quote/broadbandActivationCharge'=>array(
+			array('name'=>'term', 'type'=>'number', 'value'=>'12'),
+			array('name'=>'type', 'type'=>'text', 'placeholder'=> 'llu24s, llu24p, bt24s')
+		),
+		'signUp/quote/broadbandAvailability'=>array(
+			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz')
+		),
+		'signUp/quote/telephoneConnectionType'=>array(
+			array('name'=>'addressReference', 'type'=>'text', 'value'=>'A14321522680')
+		),
+		'signUp/quote/telephoneAddress'=>array(
+			array('name'=>'buildingNumber', 'type'=>'text', 'value'=>'26'),
+			array('name'=>'thoroughFare', 'type'=>'text', 'value'=>'Lever Street'),
+			array('name'=>'town', 'type'=>'text', 'value'=>'Manchester'),
+			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz')
+		)
 	);
 	
 	$methodTmpl=$mustache->loadTemplate('method');

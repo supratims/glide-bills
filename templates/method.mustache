@@ -1,19 +1,24 @@
 <div class="col-xs-12">
-{{#methods}}
-	<h4>{{key}}, {{api}}</h4>
-	<form role="form" id="{{key}}">
-		
-		{{#params}}
-			<div class="form-group">
-				{{name}} <input type="{{type}}" name="{{name}}">	
-			</div>
-		{{/params}}
-		
-		<input type="hidden" name="apiMethod" value="{{key}}">
-		<input type="hidden" name="api" value="{{api}}">
-		<a class="btn btn-default submitFormButton" data-formid="{{key}}">Test</a>
-		<span id="result{{key}}"></span>
-	</form>	
-	
+{{#methods}}	
+	<div class="panel panel-default">
+		<div class="panel-heading">{{key}}, {{api}}</div>
+		<div class="panel-body">
+			<form role="form" id="{{key}}" data-formid="{{key}}" class="form-inline">
+				
+				{{#params}}
+					<div class="form-group" style="padding: 10px 20px">
+						{{name}} <input type="{{type}}" name="{{name}}" placeholder="{{placeholder}}" value="{{value}}">	
+					</div>
+				{{/params}}
+				
+				<input type="hidden" name="apiMethod" value="{{key}}">
+				<input type="hidden" name="api" value="{{api}}">
+				
+				<div class="alert" role="alert" id="result{{key}}">
+					
+				</div>				
+			</form>	
+		</div>
+	</div>
 {{/methods}}
 </div>

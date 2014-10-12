@@ -7,37 +7,63 @@
 	<script type="text/javascript">
 	$(document).ready(function() {
 		$('body').on("click", 'a.submitFormButton', function(e) {
-			console.log("test clicked");
 			e.preventDefault();
-			var formId=$(this).data('formid');
-			$.ajax({
-				url: 'uitestGlide.php',
-				type: 'POST',
-				async: 'true',
-				data: $('#'+formId).serialize(),
-				success: function(res) {
-					$('#result'+formId).html(res);
-				}
+			$('form').each(function() {
+				var formId=$(this).data('formid');
+				$.ajax({
+					url: 'uitestGlide.php',
+					type: 'POST',
+					async: 'true',
+					data: $('#'+formId).serialize(),
+					success: function(d) {
+						var res = $.parseJSON(d);
+						if (res.error == 'exception') {
+							delete res.error;
+							$('#result'+formId).removeClass('alert-success').addClass('alert-danger');
+						} else {
+							$('#result'+formId).removeClass('alert-danger').addClass('alert-success');
+						}		
+						str = '';
+						//console.log(res);
+						walk(res);
+						$('#result'+formId).html(str);		
+					}
+				});
 			});
-
 		});
 		$.ajax({
 			url: 'uitestGlide.php',
 			type: 'GET',
 			data: {},
-			success: function(res) {
-				$('#main').html(res);
+			success: function(res) {				
+				$('#main').append('<div class="col-xs-12"><a title="Click to test" class="pull-right btn btn-primary submitFormButton">Test</a></div>');
+				$('#main').append(res);
 			}
 		});
 
 	});
+	var str = '';
+	function walk(obj) {
+		//console.log(typeof obj);
+		if (obj instanceof Object) {
+			for (var key in obj) {
+				if (obj.hasOwnProperty(key)) {
+				    var val = obj[key];
+				    if (typeof val == 'string' || typeof val == 'number')
+				    	str += key + ": " + val + "<br>";
+				    else {
+				    	str += '<br>'+ key + ": ";
+				    	walk(val);	
+				    }									
+				}
+			}			
+		}	
+	}	
 	</script>
 </head>
 <body>
-<div> <h3>Glide Test</h3></div>
-<div class="container" id="main">
-	
-
+<div style="margin:auto;width:300px"> <h3>Glide Test</h3></div>
+<div class="container" id="main">	
 
 </div>
 
