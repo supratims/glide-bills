@@ -24,7 +24,10 @@ $services=$glide->get_services();
 		$res=$glide->$apiMethod($service_data+$arr);
 		echo json_encode($res);
 	} catch(GlideException $e){
-		echo json_encode(array('error'=>'exception')+$e->get_errors());
+		if ($e->get_errors())
+			echo json_encode(array('error'=>'exception')+$e->get_errors());
+		else 
+			echo json_encode(array('error'=>'exception'));
 	}
 ?>
 

@@ -194,10 +194,23 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(sizeof($res)>0);
 	}
 
+	function testGlidesearchPremiseByPostcode_nopostcode(){
+		try {
+			$res=$this->glide->signUp_address_searchPremiseByPostcode(array(
+				'postcode'=>''
+			));
+		}
+		catch (GlideException $ef){
+			$errors=$ef->get_errors();
+		}
+		$this->assertTrue(is_array($errors));
+		$this->assertTrue(strpos($errors['postcode'], 'The postcode entered was not valid')!==false);
+	}
+
 	function testGlidesearchPremiseByOrganisation(){
 		try {
 			$res=$this->glide->signUp_address_searchPremiseByOrganisation(array(
-				'organisation'=>'Acme'
+				'organisation'=>'THE LACAMANDA LTD'
 			));
 		}
 		catch (GlideException $e){
@@ -208,7 +221,19 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(sizeof($res)>0);
 
 	}
+	function testGlidesearchPremiseByOrganisation_noOrganisation(){
+		try {
+			$res=$this->glide->signUp_address_searchPremiseByOrganisation(array(
+				'organisation'=>''
+			));
+		}
+		catch (GlideException $e){
+			$errors=$e->get_errors();
+		}
+		$this->assertTrue(is_array($errors));
+		$this->assertTrue(strpos($errors['organisation'], 'You must enter an organisation name')!==false);
 
+	}	
 	function testGlidesearchPremiseByStreet(){
 		try {
 			$res=$this->glide->signUp_address_searchPremiseByStreet(array(
@@ -223,8 +248,20 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(is_array($res));
 		$this->assertTrue(sizeof($res)>0);
 	}
-
-	function testGlidesearchPremiseByStreet_error(){
+	function testGlidesearchPremiseByStreet_noStreet(){
+		try {
+			$res=$this->glide->signUp_address_searchPremiseByStreet(array(
+				'street'=>'',
+				'town'=>'Manchester'
+			));
+		}
+		catch (GlideException $e){
+			$errors=$e->get_errors();
+		}
+		$this->assertTrue(is_array($errors));
+		$this->assertTrue(strpos($errors['street'], 'You must enter a street name')!==false);
+	}
+	function testGlidesearchPremiseByStreet_wrongStreet(){
 		try {
 			$res=$this->glide->signUp_address_searchPremiseByStreet(array(
 				'street'=>'51 Lever Street',
@@ -234,7 +271,6 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		catch (GlideException $e){
 			$this->handle_exception($e);
 		}
-		//var_dump($res);
 		$this->assertTrue(strpos($res['error'], 'No matching address records found for')!==false);
 	}
 
@@ -248,12 +284,22 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		catch (GlideException $e){
 			$this->handle_exception($e);
 		}
-		//var_dump($res);
 		$this->assertTrue(is_array($res));
 		$this->assertTrue(sizeof($res)>0);
-		$this->assertTrue($res['town'] == 'Manchester');
 	}
-
+	function testGlidegetPremiseAddress_noUdprn(){
+		try {
+			$res=$this->glide->signUp_address_getPremiseAddress(array(
+				'udprn'=>'',
+				'simplified'=>true
+			));
+		}
+		catch (GlideException $e){
+			$errors=$e->get_errors();
+		}
+		$this->assertTrue(is_array($errors));
+		$this->assertTrue(strpos($errors['udprn'], 'You must enter a valid udprn')!==false);
+	}
 	function testGlidevalidatePostcode(){
 		try {
 			$res=$this->glide->signUp_address_validatePostcode(array(
@@ -263,24 +309,20 @@ class testGlide extends PHPUnit_Framework_TestCase {
 		catch (GlideException $e){
 			$this->handle_exception($e);
 		}
-		//var_dump($res);
 		$this->assertTrue($res['success']);
 	}
-
-	function testGlidevalidatePostcode_error(){
+	function testGlidevalidatePostcode_nopostcode(){
 		try {
 			$res=$this->glide->signUp_address_validatePostcode(array(
-				'postcode'=>'X1'
+				'postcode'=>''
 			));
 		}
 		catch (GlideException $e){
 			$errors=$e->get_errors();
-			//var_dump($errors);
 		}
-		//var_dump($res);
-		$this->assertEquals($res, NULL);
+		$this->assertTrue(is_array($errors));
+		$this->assertTrue(strpos($errors['postcode'], 'The postcode entered was not valid')!==false);
 	}
-
 	/*
 	function testGlidecannotFind(){
 		//Need to find what this API exactly does.

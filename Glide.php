@@ -152,6 +152,50 @@ class Glide {
 		return $data;
 	}
 
+	private function valid_postcode(Array $data){
+		if (!Glide::_make_postcode($data['postcode'])){
+			$errors['postcode']='The postcode entered was not valid.';
+		}
+		if (!isset($data['postcode'])){
+			$errors['postcode']='You must enter a postcode.';
+		}	
+		return $errors;	
+	}
+
+	private function valid_signUp_address_searchPremiseByPostcode(Array $data){
+		$errors=$this->valid_postcode($data);
+		$this->valid_check_errors($errors,$data);
+		return $data;
+	}
+	private function valid_signUp_address_searchPremiseByOrganisation(Array $data){
+		if (!isset($data['organisation']) || empty($data['organisation']) || is_null($data['organisation'])){
+			$errors['organisation']='You must enter an organisation name.';
+		}
+		$this->valid_check_errors($errors,$data);
+		return $data;
+	}
+	private function valid_signUp_address_searchPremiseByStreet(Array $data){
+		if (!isset($data['street']) || empty($data['street']) || is_null($data['street'])){
+			$errors['street']='You must enter a street name.';
+		}
+		if (!isset($data['town']) || empty($data['town']) || is_null($data['town'])){
+			$errors['town']='You must enter a town name.';
+		}		
+		$this->valid_check_errors($errors,$data);
+		return $data;
+	}
+	private function valid_signUp_address_getPremiseAddress(Array $data){
+		if (!isset($data['udprn']) || empty($data['udprn']) || is_null($data['udprn'])){
+			$errors['udprn']='You must enter a valid udprn.';
+		}
+		$this->valid_check_errors($errors,$data);
+		return $data;
+	}
+	private function valid_signUp_address_validatePostcode(Array $data){
+		$errors=$this->valid_postcode($data);
+		$this->valid_check_errors($errors,$data);
+		return $data;
+	}
 	protected function valid_check_errors($errors=null,$data=null){
 		if (!empty($errors)){
 			throw new GlideException('There was a problem with the information submitted.',array(

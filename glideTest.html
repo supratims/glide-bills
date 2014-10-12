@@ -17,6 +17,7 @@
 					async: 'true',
 					data: $('#'+formId).serialize(),
 					success: function(d) {
+						//console.log(d);
 						var res = $.parseJSON(d);
 						if (res.error == 'exception') {
 							delete res.error;
