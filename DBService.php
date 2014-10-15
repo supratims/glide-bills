@@ -1,8 +1,8 @@
 <?php
 class DBService{
-    private $host      = 'localhost';
+    private $host      = '127.0.0.1';
     private $user      = 'root';
-    private $pass      = 'accuris';
+    private $pass      = 'root';
     private $dbname    = 'glide_bills_test';
 
     private $dbh;
@@ -10,7 +10,7 @@ class DBService{
     private $stmt;
 
     public function __construct(){
-        $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
+        $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname.';charset=utf8';
         $options = array(
             PDO::ATTR_PERSISTENT    => true,
             PDO::ATTR_ERRMODE       => PDO::ERRMODE_EXCEPTION
@@ -19,39 +19,15 @@ class DBService{
             $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
         }
         catch(PDOException $e){
-            $this->error = $e->getMessage();
+            $this->error=$e->getMessage();
+            //echo $this->error;
         }
     }
 
-	public function query($query){
-		$this->stmt = $this->dbh->prepare($query);
-	}
-
-	public function bind($param, $value, $type = null){
-		if (is_null($type)) {
-			switch (true) {
-				case is_int($value):
-					$type = PDO::PARAM_INT;
-					break;
-				case is_bool($value):
-					$type = PDO::PARAM_BOOL;
-					break;
-				case is_null($value):
-					$type = PDO::PARAM_NULL;
-					break;
-				default:
-					$type = PDO::PARAM_STR;
-			}
-		}
-		$this->stmt->bindValue($param, $value, $type);
-	}
-
-	public function execute(){
-		return $this->stmt->execute();
-	}
-
-	public function resultset(){
-		$this->execute();
-		return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+	public function fetch($query, $paramArray){
+		$stmt=$this->dbh->prepare($query);
+		$stmt->execute($paramArray);
+		$rows=$stmt->fetchAll(PDO::FETCH_ASSOC);		
+		return $rows;
 	}
 }

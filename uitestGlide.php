@@ -1,12 +1,15 @@
 <?php
 require 'vendor/autoload.php';
 require 'Glide.php';
+require 'DBService.php';
 $api_key=shell_exec('cat api_key');
 if (empty($api_key)){
 	echo('Create a file called "api_key" which contains your Glide API key.');
 }
 $glide=new Glide($api_key);
 $services=$glide->get_services();
+$dbservice = new DBService();
+
 ?>
 <?php if (!empty($_POST)):
 
