@@ -19,6 +19,7 @@ $dbservice = new DBService();
 
 	$apiMethod=$_POST['apiMethod'];
 	$api=$_POST['api'];
+	$testid=$_POST['testid'];
 	foreach ($services as $name => $title){
 		$arr[$name]=true;
 	}
@@ -26,6 +27,8 @@ $dbservice = new DBService();
 	try {
 		$res=$glide->$apiMethod($service_data+$arr);
 		//store test results into db with testid and $api
+		//$dbservice->insert('insert into test_api_details(fk_test_id, api, api_param, api_value, output_json, creation) values( ?, ?, ?, ?, ?)', 
+		//		$testid, $api, PARAM, PARAM_VALUE, json_encode($res), now());
 		echo json_encode($res);
 	} catch(GlideException $e){
 		if ($e->get_errors())

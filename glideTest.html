@@ -13,36 +13,55 @@
 		
 		$('body').on("click", 'a.submitFormButton', function(e) {
 			e.preventDefault();
-			$('form').each(function() {
-				var formId=$(this).data('formid');
-				$('#result'+formId).html('Loading ...');
-				
-				$.ajax({
-					url: 'uitestGlide.php',
-					type: 'POST',
-					async: 'true',
-					data: $('#'+formId).serialize(),
-					success: function(d) {
-						//console.log(d);
-						var res = $.parseJSON(d);
-						if (res.error == 'exception') {
-							delete res.error;
-							$('#result'+formId).removeClass('alert-success').addClass('alert-danger');
-						} else {
-							$('#result'+formId).removeClass('alert-danger').addClass('alert-success');
+			//save test id first
+			$.ajax({
+				url: 'glideTestCreate.php',
+				type: 'POST',
+				data: {},
+				success: function(r) {
+					if (r && $.parseJSON(r)) {
+						var testid = $.parseJSON(r);
+						//console.log("created with id " + testid);
+						submitForms(testid);
+					} else {
+						alert("Failed inserting into db.");	//todo : inline this msg
+					}					
+				}
+			});	
+			function submitForms(testid) {
+				$('form').each(function() {
+					var formId=$(this).data('formid');
+					$('<input>').attr('type','hidden').attr('name','testid').val(testid).appendTo($('#'+formId));
+					$('#result'+formId).html('Loading ...');
+					
+					$.ajax({
+						url: 'uitestGlide.php',
+						type: 'POST',
+						async: 'true',
+						data: $('#'+formId).serialize(),
+						success: function(d) {
+							//console.log(d);
+							var res = $.parseJSON(d);
+							if (res.error == 'exception') {
+								delete res.error;
+								$('#result'+formId).removeClass('alert-success').addClass('alert-danger');
+							} else {
+								$('#result'+formId).removeClass('alert-danger').addClass('alert-success');
+							}
+							str = '';
+							//console.log(res);
+							walk(res);
+							$('#result'+formId).html(str);
 						}
-						str = '';
-						//console.log(res);
-						walk(res);
-						$('#result'+formId).html(str);
-					}
+					});
 				});
-			});
+			}		
+			
 		});
 		$.ajax({
 			url: 'uitestGlide.php',
 			type: 'GET',
-			data: {},
+			data: {testid:getParameterByName('testid')},
 			success: function(res) {
 				$('#main').append('<div class="col-xs-12"><a title="Click to test" class="pull-right btn btn-primary submitFormButton">Test</a></div>');
 				$('#main').append(res);

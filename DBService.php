@@ -29,5 +29,18 @@ class DBService{
 		$stmt->execute($paramArray);
 		$rows=$stmt->fetchAll(PDO::FETCH_ASSOC);		
 		return $rows;
+		//todo : wrap all such queries in try catch and throw a generic exception type.
 	}
+
+	//inserts using a query and param and returns the last inserted id
+    public function insert($query, $params){
+        try{ 
+            $stmt = $this->dbh->prepare($query); 
+            $stmt->execute($params);
+            return $this->dbh->lastInsertId();
+        }catch(PDOException $e){
+            throw new Exception($e->getMessage()); //todo:create a subexception class to handle this 
+        }  
+        return null;         
+    }	
 }
