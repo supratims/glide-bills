@@ -1,9 +1,9 @@
-<?php 
+<?php
 require 'vendor/autoload.php';
 require 'Glide.php';
 $api_key=shell_exec('cat api_key');
 if (empty($api_key)){
-	echo('Create a file called "api_key" which constains your Glide API key.');
+	echo('Create a file called "api_key" which contains your Glide API key.');
 }
 $glide=new Glide($api_key);
 $services=$glide->get_services();
@@ -11,9 +11,9 @@ $services=$glide->get_services();
 <?php if (!empty($_POST)):
 
 	foreach($_POST as $param=>$value){
-		$service_data[$param]=$value;	
+		$service_data[$param]=$value;
 	}
-	
+
 	$apiMethod=$_POST['apiMethod'];
 	$api=$_POST['api'];
 	foreach ($services as $name => $title){
@@ -22,16 +22,17 @@ $services=$glide->get_services();
 
 	try {
 		$res=$glide->$apiMethod($service_data+$arr);
+		//store test results into db with testid and $api
 		echo json_encode($res);
 	} catch(GlideException $e){
 		if ($e->get_errors())
 			echo json_encode(array('error'=>'exception')+$e->get_errors());
-		else 
+		else
 			echo json_encode(array('error'=>'exception'));
 	}
 ?>
 
-<?php else: 
+<?php else:
 	$mustache=new Mustache_Engine(array(
    		'loader' => new Mustache_Loader_FilesystemLoader('templates')
 	));
@@ -39,21 +40,21 @@ $services=$glide->get_services();
 	$paramFactory=array(
 		'signUp/address/searchPremiseByPostcode'=>array(
 			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz')
-		),					
+		),
 		'signUp/address/searchPremiseByOrganisation'=>array(
 			array('name'=>'organisation', 'type'=>'text', 'value'=>'THE LACAMANDA LTD')
-		),					
+		),
 		'signUp/address/searchPremiseByStreet'=>array(
 			array('name'=>'street', 'type'=>'text', 'value'=>'Little Lever Street'),
 			array('name'=>'town', 'type'=>'text', 'value'=>'Manchester')
-		),	
+		),
 		'signUp/address/getPremiseAddress'=>array(
 			array('name'=>'udprn', 'type'=>'text', 'value'=>'14307716'),
 			array('name'=>'simplified', 'type'=>'checkbox', 'value'=>'on')
-		),						
+		),
 		'signUp/address/validatePostcode'=>array(
 			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz')
-		),			
+		),
 		'signUp/quote/allServices'=>array(
 			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz'),
 			array('name'=>'tenants', 'type'=>'number', 'value'=>'5'),
@@ -63,7 +64,7 @@ $services=$glide->get_services();
 			array('name'=>'water', 'type'=>'checkbox'),
 			array('name'=>'telephone', 'type'=>'checkbox'),
 			array('name'=>'tv', 'type'=>'checkbox'),
-			array('name'=>'broadband', 'type'=>'checkbox'),			
+			array('name'=>'broadband', 'type'=>'checkbox'),
 			array('name'=>'broadbandType', 'type'=>'text', 'placeholder'=> 'llu24s, llu24p, bt24s')
 			//array('name'=>'broadbandType', 'type'=>'select', 'options'=>array(array('key'=>'llu24s'), array('key'=>'llu24p'), array('key'=>'bt24s')))
 		),
@@ -74,7 +75,7 @@ $services=$glide->get_services();
 			array('name'=>'term', 'type'=>'number', 'value'=>'12'),
 			array('name'=>'extra', 'type'=>'text', 'placeholder'=> 'llu24s, llu24p, bt24s')
 		),
-		'signUp/quote/telephoneConnectionCharge'=>array(			
+		'signUp/quote/telephoneConnectionCharge'=>array(
 			array('name'=>'tenants', 'type'=>'number', 'value'=>'5'),
 			array('name'=>'term', 'type'=>'number', 'value'=>'12'),
 			array('name'=>'orderType', 'type'=>'text', 'placeholder'=> 'restart, takeover, transfer, convert, new'),
@@ -97,14 +98,17 @@ $services=$glide->get_services();
 			array('name'=>'postcode', 'type'=>'text', 'value'=>'m1 1dz')
 		)
 	);
-	
+
+	//load params using testid from database
+
 	$methodTmpl=$mustache->loadTemplate('method');
 
 	$methods=$glide->get_methods();
 	$method=array();
-	foreach ($methods as $key => $val){		
-		array_push($method, array('key'=>$key, 'api'=>$val, 'params'=>$paramFactory[$val]));			
+	foreach ($methods as $key => $val){
+		array_push($method, array('key'=>$key, 'api'=>$val, 'params'=>$paramFactory[$val]));
 	}
+	//also load test results from database
 	$methodArray['methods']=$method;
 	echo $methodTmpl->render($methodArray);
 

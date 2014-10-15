@@ -11,6 +11,7 @@
 			$('form').each(function() {
 				var formId=$(this).data('formid');
 				$('#result'+formId).html('Loading ...');
+				//create and send a testid
 				$.ajax({
 					url: 'uitestGlide.php',
 					type: 'POST',
@@ -24,11 +25,11 @@
 							$('#result'+formId).removeClass('alert-success').addClass('alert-danger');
 						} else {
 							$('#result'+formId).removeClass('alert-danger').addClass('alert-success');
-						}		
+						}
 						str = '';
 						//console.log(res);
 						walk(res);
-						$('#result'+formId).html(str);		
+						$('#result'+formId).html(str);
 					}
 				});
 			});
@@ -37,7 +38,7 @@
 			url: 'uitestGlide.php',
 			type: 'GET',
 			data: {},
-			success: function(res) {				
+			success: function(res) {
 				$('#main').append('<div class="col-xs-12"><a title="Click to test" class="pull-right btn btn-primary submitFormButton">Test</a></div>');
 				$('#main').append(res);
 			}
@@ -55,17 +56,17 @@
 				    	str += key + ": " + val + "<br>";
 				    else {
 				    	str += '<br>'+ key + ": ";
-				    	walk(val);	
-				    }									
+				    	walk(val);
+				    }
 				}
-			}			
-		}	
-	}	
+			}
+		}
+	}
 	</script>
 </head>
 <body>
 <div style="margin:auto;width:300px"> <h3>Glide Test</h3></div>
-<div class="container" id="main">	
+<div class="container" id="main">
 
 </div>
 
