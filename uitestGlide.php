@@ -2,6 +2,7 @@
 require 'vendor/autoload.php';
 require 'Glide.php';
 require 'DBService.php';
+date_default_timezone_set("Europe/London");
 $api_key=shell_exec('cat api_key');
 if (empty($api_key)){
 	echo('Create a file called "api_key" which contains your Glide API key.');
@@ -12,9 +13,11 @@ $dbservice = new DBService();
 
 ?>
 <?php if (!empty($_POST)):
-
+	$paramsToSave=array();
 	foreach($_POST as $param=>$value){
 		$service_data[$param]=$value;
+		if ($param != 'apiMethod' && $param != 'api' && $param != 'testid')
+			$paramsToSave[$param]=$value;
 	}
 
 	$apiMethod=$_POST['apiMethod'];
@@ -32,12 +35,13 @@ $dbservice = new DBService();
 		} else {
 			$res=array('error'=>'exception');
 		}
-	} finally {
-		//store test results into db with testid and $api no matter what the result of API is
-		$dbservice->insert('insert into test_api_details(fk_test_id, api, api_param, output_json, creation) values( ?, ?, ?, ?, ?)',
-				array($testid, $api, file_get_contents( 'php://input' ), json_encode($res), date("Y-m-d H:i:s")));
-		echo json_encode($res);
-	}
+	} 
+
+	//store test results into db with testid and $api no matter what the result of API is
+	$dbservice->insert('insert into test_api_details(fk_test_id, api, api_param, output_json, creation) values( ?, ?, ?, ?, ?)',
+			array($testid, $api, json_encode($paramsToSave), json_encode($res), date("Y-m-d H:i:s")));
+	echo json_encode($res);
+
 ?>
 
 <?php else:

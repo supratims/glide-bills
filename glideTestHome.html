@@ -4,6 +4,7 @@
 	<title>Glide Test Home</title>
 	<link rel="stylesheet" href="components/bootstrap/css/bootstrap.min.css">
 	<script type="text/javascript" src="components/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="components/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
 
@@ -16,16 +17,48 @@
 			}
 		});
 
+		$('body').on('click', '.showdetails', function(e) {
+			e.preventDefault();
+			var testid = $(this).data('id');
+			$.ajax({
+				url: 'glideTestDetailsFetch.php?testid='+testid,
+				type: 'GET',
+				data: {},
+				success: function(res) {
+					$('#detailsModal .modal-body').html('');
+					$('#detailsModal .modal-body').html(res);
+					$('#detailsModal .modal-title').html('Test details for ID : '+testid);
+					$('#detailsModal').modal('show');
+				}
+			});			
+		});
+
 	});
 	</script>
 </head>
 <body>
 <div style="margin:auto;width:300px"> <h3>Glide Test Home</h3></div>
 <div class="container">
-	<div class="col-xs-12" style="margin:10px 0px"><a href="glideTest.html" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> New Test</a></div>
+	<div class="col-xs-12" style="margin:10px 0px">
+		<a href="glideTest.html" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> New Test</a>
+	</div>
 	<div id="testTable" class="col-xs-12">
 
 	</div>
+
+	<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog modal-lg">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	        <h4 class="modal-title"></h4>
+	      </div>
+	      <div class="modal-body">
+	        
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 </div>
 </body>
 </html>

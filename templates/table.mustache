@@ -2,7 +2,7 @@
 	<thead>
 	<tr>
 		<th>
-			<td>TestId</td><td>Result</td><td>Ran on</td>
+			<td>TestId</td><td>Ran on</td><td>Details</td>
 		</th>
 	</tr>
 	</thead>
@@ -10,7 +10,7 @@
 		{{#rows}}	
 		<tr>
 			{{#cells}}
-				<td></td><td>{{testid}}</td><td>{{result}}</td><td>{{creation}}</td>
+				<td></td><td>{{testid}}</td><td>{{creation}}</td><td><a class="btn showdetails" href="#" data-id="{{testid}}">View Details</a></td>
 			{{/cells}}
 		</tr>
 		{{/rows}}

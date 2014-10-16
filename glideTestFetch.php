@@ -1,6 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 require 'DBService.php';
+date_default_timezone_set("Europe/London");
 $mustache=new Mustache_Engine(array(
 	'loader' => new Mustache_Loader_FilesystemLoader('templates')
 ));
@@ -13,7 +14,9 @@ if (count($result) == 0){
 }else{
 	$tableData=array();
 	foreach($result as $row) {
-		array_push($tableData, array('cells'=>array('testid'=>$row['test_id'], 'result'=>$row['result'], 'creation'=>date_format(date_create($row['creation']),'d M Y, H:i:s A') )));
+		array_push($tableData, 
+			array('cells'=>array('testid'=>$row['test_id'], 'result'=>$row['result'], 
+					'creation'=>date_format(date_create($row['creation']),'d M Y, H:i:s A') )));
 	}
 	$tableTmpl=$mustache->loadTemplate('table');
 	$tableArray['rows']=$tableData;

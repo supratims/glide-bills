@@ -1,0 +1,17 @@
+
+{{#methods}}	
+	<div class="panel panel-default">
+		<div class="panel-heading">{{key}} </div>
+		<div class="panel-body">				
+			{{#params}}
+				<div class="form-group" style="padding: 10px 20px">
+					Params: {{param}} 	
+				</div>
+			{{/params}}
+			
+			<div class="alert {{error-class}}" role="alert">
+				Output: {{output}}	
+			</div>
+		</div>
+	</div>
+{{/methods}}

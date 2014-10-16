@@ -2,7 +2,7 @@
 class DBService{
     private $host      = '127.0.0.1';
     private $user      = 'root';
-    private $pass      = 'accuris';
+    private $pass      = 'root';
     private $dbname    = 'glide_bills_test';
 
     private $dbh;
