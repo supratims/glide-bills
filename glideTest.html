@@ -10,7 +10,7 @@
 	    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 	}
 	$(document).ready(function() {
-		
+
 		$('body').on("click", 'a.submitFormButton', function(e) {
 			e.preventDefault();
 			//save test id first
@@ -25,22 +25,23 @@
 						submitForms(testid);
 					} else {
 						alert("Failed inserting into db.");	//todo : inline this msg
-					}					
+					}
 				}
-			});	
+			});
 			function submitForms(testid) {
 				$('form').each(function() {
 					var formId=$(this).data('formid');
 					$('<input>').attr('type','hidden').attr('name','testid').val(testid).appendTo($('#'+formId));
 					$('#result'+formId).html('Loading ...');
-					
+					//console.log($('#'+formId).serialize());
+
 					$.ajax({
 						url: 'uitestGlide.php',
 						type: 'POST',
 						async: 'true',
 						data: $('#'+formId).serialize(),
 						success: function(d) {
-							//console.log(d);
+							console.log(d);
 							var res = $.parseJSON(d);
 							if (res.error == 'exception') {
 								delete res.error;
@@ -54,16 +55,17 @@
 							$('#result'+formId).html(str);
 						}
 					});
+
 				});
-			}		
-			
+			}
+
 		});
 		$.ajax({
 			url: 'uitestGlide.php',
 			type: 'GET',
 			data: {testid:getParameterByName('testid')},
 			success: function(res) {
-				$('#main').append('<div class="col-xs-12"><a title="Click to test" class="pull-right btn btn-primary submitFormButton">Test</a></div>');
+				$('#main').append(getNavHeader());
 				$('#main').append(res);
 			}
 		});
@@ -86,12 +88,19 @@
 			}
 		}
 	}
+	function getNavHeader() {
+		return '<div class="col-xs-12" style="margin: 20px 0px">'+
+					'<a title="Click to go back" class="pull-left btn btn-default" href="glideTestHome.html"><span class="glyphicon glyphicon-arrow-left"></span> Glide Test Home</a></li>'+
+					'<a title="Click to test" class="pull-right btn btn-primary submitFormButton"><span class="glyphicon glyphicon-play"></span> Run Test</a>'+
+			   '</div>';
+	}
 	</script>
 </head>
 <body>
 <div style="margin:auto;width:300px"> <h3>Glide Test</h3></div>
-<div class="container" id="main">
-
+<div class="container">
+	<div id="main" class="col-xs-12">
+	</div>
 </div>
 
 </body>

@@ -6,30 +6,25 @@
 	<script type="text/javascript" src="components/jquery/jquery.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
-		
+
 		$.ajax({
 			url: 'glideTestFetch.php',
 			type: 'GET',
 			data: {},
-			success: function(s) {
-				var res = $.parseJSON(s);
-				if (!res || res.length == 0) {
-					$('#testTable').html('<p>No saved tests found </p>');
-				} else {
-
-				}
+			success: function(res) {
+				$('#testTable').html(res);
 			}
 		});
 
-	});	
+	});
 	</script>
 </head>
 <body>
 <div style="margin:auto;width:300px"> <h3>Glide Test Home</h3></div>
 <div class="container">
-	<div class="col-xs-12"><a href="glideTest.html" class="btn">New Test</a></div>
+	<div class="col-xs-12" style="margin:10px 0px"><a href="glideTest.html" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> New Test</a></div>
 	<div id="testTable" class="col-xs-12">
-		
+
 	</div>
 </div>
 </body>

@@ -23,18 +23,20 @@ $dbservice = new DBService();
 	foreach ($services as $name => $title){
 		$arr[$name]=true;
 	}
-
+	$res=null;
 	try {
 		$res=$glide->$apiMethod($service_data+$arr);
-		//store test results into db with testid and $api
-		//$dbservice->insert('insert into test_api_details(fk_test_id, api, api_param, api_value, output_json, creation) values( ?, ?, ?, ?, ?)', 
-		//		$testid, $api, PARAM, PARAM_VALUE, json_encode($res), now());
-		echo json_encode($res);
 	} catch(GlideException $e){
-		if ($e->get_errors())
-			echo json_encode(array('error'=>'exception')+$e->get_errors());
-		else
-			echo json_encode(array('error'=>'exception'));
+		if ($e->get_errors()){
+			$res=array('error'=>'exception')+$e->get_errors();
+		} else {
+			$res=array('error'=>'exception');
+		}
+	} finally {
+		//store test results into db with testid and $api no matter what the result of API is
+		$dbservice->insert('insert into test_api_details(fk_test_id, api, api_param, output_json, creation) values( ?, ?, ?, ?, ?)',
+				array($testid, $api, file_get_contents( 'php://input' ), json_encode($res), date("Y-m-d H:i:s")));
+		echo json_encode($res);
 	}
 ?>
 
@@ -114,7 +116,7 @@ $dbservice = new DBService();
 	foreach ($methods as $key => $val){
 		array_push($method, array('key'=>$key, 'api'=>$val, 'params'=>$paramFactory[$val]));
 	}
-	//also load test results from database
+	//load test results from database here
 	$methodArray['methods']=$method;
 	echo $methodTmpl->render($methodArray);
 

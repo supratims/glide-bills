@@ -1,0 +1,18 @@
+<table class="table table-hover table-striped table-bordered">
+	<thead>
+	<tr>
+		<th>
+			<td>TestId</td><td>Result</td><td>Ran on</td>
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+		{{#rows}}	
+		<tr>
+			{{#cells}}
+				<td></td><td>{{testid}}</td><td>{{result}}</td><td>{{creation}}</td>
+			{{/cells}}
+		</tr>
+		{{/rows}}
+	</tbody>	
+</table>

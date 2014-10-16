@@ -158,8 +158,8 @@ class Glide {
 		}
 		if (!isset($data['postcode'])){
 			$errors['postcode']='You must enter a postcode.';
-		}	
-		return $errors;	
+		}
+		return $errors;
 	}
 
 	private function valid_signUp_address_searchPremiseByPostcode(Array $data){
@@ -180,7 +180,7 @@ class Glide {
 		}
 		if (!isset($data['town']) || empty($data['town']) || is_null($data['town'])){
 			$errors['town']='You must enter a town name.';
-		}		
+		}
 		$this->valid_check_errors($errors,$data);
 		return $data;
 	}
@@ -245,6 +245,7 @@ class Glide {
 			}
 			throw new GlideException($err_msg,array(
 				'data'=>$data,
+				//add error message here ?
 			));
 		}
 		return $res_arr;
@@ -264,9 +265,9 @@ class Glide {
 	}
 
 	/* These functions would ideally be provided by third party dependencies pulled down by
-		Composer. At present it's difficult to work out which libraries should be used and 
+		Composer. At present it's difficult to work out which libraries should be used and
 		want to avoid overkill.
-		
+
 		For any developers working on forking this project replacing these with external
 		dependencies would be a good task to work on - will require a small amount of changes
 		to the main library code to check method names and parameters
